@@ -1,27 +1,24 @@
-# GitHub
+# Blog Yönetim Sistemi - MySQL Veritabanı Tasarımı
 
-```markdown
-# Blog Management System - MySQL Database Design
+Bu belge, bir Blog Yönetim Sistemi için MySQL veritabanı şemasının detaylı tasarımını sunar. Kullanıcılar, gönderiler, yorumlar, kategoriler ve etiketler gibi varlıkların yapısını ve bu varlıklar arasındaki ilişkileri içerir.
 
-This document provides a detailed design of the MySQL database schema for a Blog Management System. It includes the structure for managing users, posts, comments, categories, and tags, as well as the relationships between these entities.
+## İçindekiler
 
-## Table of Contents
+- [Veritabanı Şeması](#veritabanı-şeması)
+  - [Kullanıcılar Tablosu](#kullanıcılar-tablosu)
+  - [Kategoriler Tablosu](#kategoriler-tablosu)
+  - [Gönderiler Tablosu](#gönderiler-tablosu)
+  - [Yorumlar Tablosu](#yorumlar-tablosu)
+  - [Etiketler Tablosu](#etiketler-tablosu)
+  - [GönderiEtiketleri Tablosu](#gönderietiketleri-tablosu)
+- [Saklı Yordamlar, Fonksiyonlar ve Tetikleyiciler](#saklı-yordamlar-fonksiyonlar-ve-tetikleyiciler)
+- [Veritabanı ve Tabloların Oluşturulması](#veritabanı-ve-tabloların-oluşturulması)
 
-- [Database Schema](#database-schema)
-  - [Users Table](#users-table)
-  - [Categories Table](#categories-table)
-  - [Posts Table](#posts-table)
-  - [Comments Table](#comments-table)
-  - [Tags Table](#tags-table)
-  - [PostTags Table](#posttags-table)
-- [Stored Procedures, Functions, and Triggers](#stored-procedures-functions-and-triggers)
-- [Creating the Database and Tables](#creating-the-database-and-tables)
+## Veritabanı Şeması
 
-## Database Schema
+### Kullanıcılar Tablosu
 
-### Users Table
-
-The `Users` table stores information about the users of the blog management system.
+`Users` tablosu, blog yönetim sistemindeki kullanıcıların bilgilerini saklar.
 
 ```sql
 CREATE TABLE Users (
@@ -32,15 +29,11 @@ CREATE TABLE Users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+Kategoriler Tablosu
+Categories tablosu, blog gönderileri için farklı kategorileri saklar.
 
-```
-
-### Categories Table
-
-The `Categories` table stores the different categories for blog posts.
-
-```sql
-
+sql
+Kodu kopyala
 CREATE TABLE Categories (
     category_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL UNIQUE,
@@ -48,15 +41,11 @@ CREATE TABLE Categories (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+Gönderiler Tablosu
+Posts tablosu, blog gönderilerini saklar.
 
-```
-
-### Posts Table
-
-The `Posts` table stores the blog posts.
-
-```sql
-
+sql
+Kodu kopyala
 CREATE TABLE Posts (
     post_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
@@ -68,15 +57,11 @@ CREATE TABLE Posts (
     FOREIGN KEY (user_id) REFERENCES Users(user_id),
     FOREIGN KEY (category_id) REFERENCES Categories(category_id)
 );
+Yorumlar Tablosu
+Comments tablosu, blog gönderilerine yapılan yorumları saklar.
 
-```
-
-### Comments Table
-
-The `Comments` table stores comments on the blog posts.
-
-```sql
-
+sql
+Kodu kopyala
 CREATE TABLE Comments (
     comment_id INT AUTO_INCREMENT PRIMARY KEY,
     post_id INT,
@@ -87,30 +72,22 @@ CREATE TABLE Comments (
     FOREIGN KEY (post_id) REFERENCES Posts(post_id),
     FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
+Etiketler Tablosu
+Tags tablosu, blog gönderileriyle ilişkilendirilebilecek etiketleri saklar.
 
-```
-
-### Tags Table
-
-The `Tags` table stores tags that can be associated with blog posts.
-
-```sql
-
+sql
+Kodu kopyala
 CREATE TABLE Tags (
     tag_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL UNIQUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+GönderiEtiketleri Tablosu
+PostTags tablosu, Posts ve Tags arasında çoktan çoğa ilişki kurar.
 
-```
-
-### PostTags Table
-
-The `PostTags` table establishes a many-to-many relationship between `Posts` and `Tags`.
-
-```sql
-
+sql
+Kodu kopyala
 CREATE TABLE PostTags (
     post_id INT,
     tag_id INT,
@@ -118,17 +95,11 @@ CREATE TABLE PostTags (
     FOREIGN KEY (post_id) REFERENCES Posts(post_id),
     FOREIGN KEY (tag_id) REFERENCES Tags(tag_id)
 );
-
-```
-
-## Stored Procedures, Functions, and Triggers
-
-### Stored Procedures
-
-### Create a Post
-
-```sql
-
+Saklı Yordamlar, Fonksiyonlar ve Tetikleyiciler
+Saklı Yordamlar
+Gönderi Oluşturma
+sql
+Kodu kopyala
 DELIMITER $$
 
 CREATE PROCEDURE CreatePost (
@@ -142,15 +113,10 @@ BEGIN
 END$$
 
 DELIMITER ;
-
-```
-
-### Functions
-
-### Get Post Count by User
-
-```sql
-
+Fonksiyonlar
+Kullanıcıya Göre Gönderi Sayısını Getir
+sql
+Kodu kopyala
 DELIMITER $$
 
 CREATE FUNCTION GetPostCountByUser(user_id INT)
@@ -163,15 +129,10 @@ BEGIN
 END$$
 
 DELIMITER ;
-
-```
-
-### Triggers
-
-### Before Post Update
-
-```sql
-
+Tetikleyiciler
+Gönderi Güncellemeden Önce
+sql
+Kodu kopyala
 DELIMITER $$
 
 CREATE TRIGGER BeforePostUpdate
@@ -182,28 +143,23 @@ BEGIN
 END$$
 
 DELIMITER ;
+Veritabanı ve Tabloların Oluşturulması
+Veritabanını Oluşturma:
 
-```
+sql
+Kodu kopyala
+CREATE DATABASE blog_management;
+USE blog_management;
+Tabloları Oluşturma:
 
-## Creating the Database and Tables
+Users tablosunu oluşturun.
+Categories tablosunu oluşturun.
+Posts tablosunu oluşturun.
+Comments tablosunu oluşturun.
+Tags tablosunu oluşturun.
+PostTags tablosunu oluşturun.
+Saklı Yordamlar, Fonksiyonlar ve Tetikleyicileri Oluşturma:
 
-1. **Create the Database:**
-    
-    ```sql
-    
-    CREATE DATABASE blog_management;
-    USE blog_management;
-    
-    ```
-    
-2. **Create the Tables:**
-    - Create the `Users` table.
-    - Create the `Categories` table.
-    - Create the `Posts` table.
-    - Create the `Comments` table.
-    - Create the `Tags` table.
-    - Create the `PostTags` table.
-3. **Create the Stored Procedures, Functions, and Triggers:**
-    - Create the `CreatePost` stored procedure.
-    - Create the `GetPostCountByUser` function.
-    - Create the `BeforePostUpdate` trigger.
+CreatePost saklı yordamını oluşturun.
+GetPostCountByUser fonksiyonunu oluşturun.
+BeforePostUpdate tetikleyicisini oluşturun.
