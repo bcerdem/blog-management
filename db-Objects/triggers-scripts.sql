@@ -1,0 +1,13 @@
+-- Triggers
+
+
+DELIMITER $$
+
+CREATE TRIGGER BeforePostUpdate
+BEFORE UPDATE ON Posts
+FOR EACH ROW
+BEGIN
+    SET NEW.updated_at = CURRENT_TIMESTAMP;
+END$$
+
+DELIMITER ;
